@@ -15,21 +15,25 @@ ggplot(thumb) + geom_point(aes(x, y))
 
 thumb.alpha0 <- -18
 thumb.beta0 <- 1024
+##thumb.nls <- nls( y ~ alpha/(alpha+x), data=thumb, start=list(alpha=-840), trace=TRUE)
+##thumb.nls <- nls( y ~ alpha/(x+beta), data=thumb, start=list(alpha=-1000,beta=-840), trace=TRUE)
 thumb.nls <- nls( y ~ x*alpha/(x-beta), data=thumb, start=list(alpha=thumb.alpha0,beta=thumb.beta0), trace=TRUE)
 thumb.nls
 
 
-test.df <- merge(data.frame( x=0:1023), thumb, all.x=TRUE) 
-test.df$y.pred <- predict(thumb.nls, newdata=test.df)
-ggplot(test.df, aes(x=x)) + geom_point(aes(y=y)) + geom_line(aes(y=y.pred)) + scale_x_continuous(lim=c(0,817)) + scale_y_continuous(lim=c(0,100))
-##problems: 1) asymptote not at 1023, but around 842, 2) possible instrument sticking?, 3) and function a bit different
+thumb.pred <- merge(data.frame( x=0:1023), thumb, all.x=TRUE) 
+thumb.pred$y.pred <- predict(thumb.nls, newdata=thumb.pred)
+ggplot(thumb.pred, aes(x=x)) + geom_point(aes(y=y)) + geom_line(aes(y=y.pred)) + scale_x_continuous(lim=c(0,817)) + scale_y_continuous(lim=c(0,100))
+##problems: 1) asymptote not at 1023, but around 842, 2) possible instrument sticking?, 3) and/or function a bit different
+ggplot(thumb.pred, aes(x=x, y=(y-y.pred))) + geom_point() + geom_smooth(se=FALSE) #show residuals
+
+
+
 
 
 ###
 ###HAND
 ###
-
-
 ggplot(hand) + geom_point(aes(x,y))
 
 hand.alpha0 <- -5
@@ -38,9 +42,11 @@ hand.nls <- nls( y ~ x*alpha/(x-beta), data=hand, start=list(alpha=hand.alpha0,b
 hand.nls
 
 
-test.df <- merge(data.frame( x=0:1023), hand, all.x=TRUE) 
-test.df$y.pred <- predict(hand.nls, newdata=test.df)
-ggplot(test.df, aes(x=x)) + geom_point(aes(y=y)) + geom_line(aes(y=y.pred)) + scale_x_continuous(lim=c(0,1023)) + scale_y_continuous(lim=c(0,100))
+hand.pred <- merge(data.frame( x=0:1023), hand, all.x=TRUE) 
+hand.pred$y.pred <- predict(hand.nls, newdata=hand.pred)
+ggplot(hand.pred, aes(x=x)) + geom_point(aes(y=y)) + geom_line(aes(y=y.pred)) + scale_x_continuous(lim=c(0,1023)) + scale_y_continuous(lim=c(0,100))
+ggplot(hand.pred, aes(x=x, y=(y-y.pred))) + geom_point() + geom_smooth(se=FALS
+E) #show residuals
 
 
 
